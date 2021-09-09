@@ -16,9 +16,6 @@ The project utilizes the Leaflet.js mapping library and consists of one main pag
 8. If the server has started successfully you should be given a   	 link to click on in the form of a demo URL in your terminal.    	Click that link and your browser will open this project.
 
 
-
-All the libraries the code uses are already linked to the files so running it should be no different than the method used to run previous projects.
-
 ***MAIN FILES OF THE APPLICATION:***
 
 A models.py file containing three Database models: User, Incident, and editRequest.
