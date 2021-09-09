@@ -1,0 +1,73 @@
+{% extends "map/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+  <h1>Select Incident Location</h1>
+  <p>Navigate the map to find the place where the incident occured.
+    Click on the location and you will see a popup showing you the gps coordinates.
+    Each time you click a differnt place, a new set of coordinates will be saved
+  </p>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-1"></div>
+    <div class="col" id="mapid" style="width: 600px; height: 500px;"></div>
+    <div class="col-1"></div>
+  </div>
+</div>
+
+<div class="container">
+  <form action="{% url 'logCase' %}" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col form-group">
+        <select class="form-control" id="select" name="type">
+          <option hidden>Select Incident Type</option>
+          <option value="Intimidation">Intimidation</option>
+          <option value="Arrest">Arrest</option>
+          <option value="Assault">Assault</option>
+        </select>
+      </div>
+      <div class="col-1"></div>
+    </div>
+
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col form-group">
+        <input class="form-control" name="latitude" placeholder="Latitude" id=lat>
+      </div>
+      <div class="col-1"></div>
+    </div>
+
+    <div class="row">
+      <div class=col-1></div>
+      <div class="col form-group">
+        <input class="form-control" name="longitude" placeholder="Longitude" id=long>
+      </div>
+      <div class=col-1></div>
+    </div>
+
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col form-group">
+        <input type="datetime-local" class="form-control" name="datetime">
+      </div>
+      <div class="col-1"></div>
+    </div>
+
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col form-group">
+        <textarea class="form-control" name="description" placeholder="Description"></textarea>
+      </div>
+      <div class="col-1"></div>
+    </div>
+
+    <input class="btn btn-primary" type="submit" value="Register">
+  </form>
+</div>
+
+{% endblock %}

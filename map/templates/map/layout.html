@@ -1,0 +1,75 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Map{% endblock %}</title>
+        <!-- LINKS TO BOOTSTRAP, LEAFLET AND LOCAL STYLESHEET -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">        
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+        <link href="{% static 'map/styles.css' %}" rel="stylesheet">
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    </head>
+
+    <body>
+        <!-- SITE TITLE AND NAVBAR -->
+        <div class="container-fluid" id="index-nav">
+            <div class="row justify-content-start align-items-center">
+                <div class="col-sm" id="siteTitle">
+                    <h2>MAPPING POLICE VIOLENCE AGAINST STUDENTS</h2>
+                        {% if user.is_authenticated %}
+                            <span class="navtext" id="signedIn"> Signed in as <strong>{{ user.username }}</strong>.</span>
+                        {% else %}
+                            <span class="navtext"> Not signed in. </span>
+                        {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <ul class="nav navtext justify-content-left" id="navbar">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Campus
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" id="uct" href="#">UCT</a></li>
+                            <li><a class="dropdown-item" id="hidding" href="#">Hiddingh</a></li>
+                            <li><a class="dropdown-item" id="uj" href="#">UJ</a></li>
+                            <li><a class="dropdown-item" id="ukzn" href="#">UKZN</a></li>
+                        </ul>
+                    </li>
+
+                    {% if user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'requests' %}">Requests</a>
+                        </li>
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+
+            </ul>
+        </div>
+        <hr>
+
+    {% block body %}
+    {% endblock %}
+        
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    </body>
+</html>

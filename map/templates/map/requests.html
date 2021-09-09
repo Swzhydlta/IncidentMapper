@@ -1,0 +1,124 @@
+{% extends "map/layout.html" %}
+
+{% block body %}
+
+<!-- SHOW REQUESTS TO SUPERUSERS ONLY -->
+{% if user.is_superuser %}
+
+<div id="case-lists" class="container-fluid">
+    <h1>Requests</h1>
+    <br>
+
+    {% for request in requests %}
+        <div class="row">
+            <div id="case-list" value="{{request.targetPost}}" class="col">Case number: {{ request.targetPost }}</div>
+        </div>
+    {% endfor %}
+
+</div>
+
+<!-- SHOW EXPANDED VERSIONS OF ORIGINAL CASE AND EDIT REQUEST -->
+<div id="single-case" class="container-fluid">
+    <h2 class="request-title">ORIGINAL INCIDENT</h2>
+    <br>
+    <div class="row">
+        <h5 id="request-case-type" class="col"></h5>
+    </div>
+    <div class="row">
+        <div id="request-case-description" class="col"></div>
+    </div>
+    <br>
+    <h2 class="request-title">EDIT REQUEST</h2>
+    <br>
+    <div class="row">
+        <div id="request-case-edit"class="col"></div>
+    </div>
+    <br>
+
+    <!-- BUTTONS TO GO BACK, ACCEPT OR REJECT REQUEST -->
+    <div class="row">
+        <div class="col-md"></div>
+        <div class="col-sm d-flex justify-content-between">
+            <button id="request-case-back" class="btn btn-success">Back</button>
+            <button id="request-case-reject" class="btn btn-danger">Reject</button>
+            <button id="request-case-accept" class="btn btn-secondary">Accept</button>
+        </div>
+        <div class="col-md"></div>
+    </div>
+</div>
+
+{% endif %}
+
+<script>
+
+// DONT SHOW SINGLE CASE, SHOW LIST OF EDIT REQUESTS
+document.querySelector("#single-case").style.display = "none";
+
+// WHEN HOVER ON A REQUEST CHANGE CURSOR
+document.querySelector("#case-lists").addEventListener("mouseover", function() {
+    this.style.cursor = 'pointer'
+})
+
+// WHEN CLICK ON A REQUEST, OPEN IT
+document.querySelector("#case-lists").addEventListener("click", function(event) {
+    const requestCase = event.target;
+    if (requestCase.id = "case-list") {
+
+        // MAKE CASE LIST INVISIBLE
+        document.querySelector("#case-lists").style.display = "none";
+
+        // FETCH ORIGINAL CASE TO DISPLAY
+        fetch("/requestACase/" + requestCase.getAttribute("value"))
+        .then(response => response.json())
+        .then(incident => {
+            document.querySelector("#request-case-type").innerHTML = incident.typeOf;
+            document.querySelector("#request-case-description").innerHTML = incident.description.replace(/\r\n?|\n/g, '<br>')
+        })
+
+        // FETCH EDIT REQUEST TO DISPLAY
+        fetch("/requestAnEdit/" + requestCase.getAttribute("value"))
+        .then(response => response.json())
+        .then(edit => {
+            document.querySelector("#request-case-edit").innerHTML = edit.description.replace(/\r\n?|\n/g, '<br>');
+
+            // IF CLICK ACCEPT, UPDATE CASE
+            document.querySelector("#request-case-accept")
+            .addEventListener("click", function() {
+                fetch('/acceptAnEdit/' + requestCase.getAttribute("value"), {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        description: edit.description
+                    })
+                })
+                .then(response => response.json())
+                .then(c => {
+                    alert(c.result)
+                })
+                location.reload()
+            })
+
+            // IF CLICK REJECT, DONT UPDATE CASE
+            document.querySelector("#request-case-reject")
+            .addEventListener("click", function() {
+                fetch('/rejectAnEdit/' + requestCase.getAttribute("value"))
+                .then(response => response.json())
+                .then(c => {
+                    alert(c.result)
+                })
+                location.reload()
+            })  
+        })
+
+        // SHOW ORIGINAL CASE AND EDIT REQUEST
+        document.querySelector("#single-case").style.display = "block";
+    }
+})
+
+// RELOAD PAGE BACK TO REQUEST LIST VIEW IF CLICK BACK
+document.querySelector("#request-case-back")
+.addEventListener("click", function() {
+    location.reload()
+})
+
+</script>
+{% endblock %}

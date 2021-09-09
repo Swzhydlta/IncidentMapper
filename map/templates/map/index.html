@@ -1,0 +1,443 @@
+{% extends "map/layout.html" %}
+
+{% block body %}
+
+<!-- HTML FOR DISPLAYING MAP AND CASES BENEATH IT -->
+<div class="container-fluid" id="maphome">
+  <div class="row justify-content-center">
+    <div class="col col-lg-10" id="mapid" style="height: 500px;"></div>
+  </div>
+  <div id="case-details">
+    <div class="row d-flex justify-content-center">
+      <div class="col col-lg-10" id="case-type-heading-wrapper">
+        <div class="d-flex justify-content-center" id="case-type"></div>
+      </div>
+    </div>
+    <br>
+    <div class="row d-flex justify-content-center">
+      <div class="col col-lg-10" id="date"></div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+      <div class="col col-lg-10" id="case"></div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col col-lg-10">
+        <button type="button" class="btn btn-danger" id="edit-button">Edit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS FOR LOGGING INCIDENTS AND EDIT REQUESTS -->
+<!-- Modal 1-->
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Log Indicent</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        To save the GPS coordinates for the incident, 
+        navigate on the map to the position where it occured 
+        and click there (tap if you are using a tablet or phone). 
+         Click 'Proceed' to close this window and save the 
+         coordinates. Click the 'X' 
+        on the upper right to abort this process.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modalClose" data-bs-dismiss="modal">Proceed</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2 -->
+
+<!-- Button trigger modal -->
+<button hidden id="modal-2-button" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+  Launch demo modal
+</button>
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Coordinates</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal2-body-text">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button id="modal-2-close" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Try again</button>
+        <button id="modal-2-save"type="button" class="btn btn-primary">Save</button>
+        <button id="modal-2-abort" type="button" class="btn btn-primary">Abort</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal 3 -->
+
+<!-- Button trigger modal -->
+<button hidden id="modal-3-button" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+  Launch demo modal
+</button>
+
+<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Incident Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal3-body-text">
+        <div class="container">
+          <form action="{% url 'logCase' %}" method="post">
+             {% csrf_token %}
+             <div class="row">
+               <div class="col-1"></div>
+               <div class="col form-group">
+                   <select class="form-control" id="select" name="type">
+                       <option hidden>Select Incident Type</option>
+                       <option value="Intimidation">Intimidation</option>
+                       <option value="Arrest">Arrest</option>
+                       <option value="Assault">Assault</option>
+                   </select>
+               </div>
+               <div class="col-1"></div>
+             </div>
+
+             <div class="row">
+               <div class="col-1"></div>
+               <div class="col form-group">
+                   <input hidden class="form-control" name="latitude" placeholder="Latitude" id=lat>
+               </div>
+               <div class="col-1"></div>
+             </div>
+         
+             <div class="row">
+               <div class=col-1></div>
+               <div class="col form-group">
+                 <input hidden class="form-control" name="longitude" placeholder="Longitude" id=long>
+               </div>
+               <div class=col-1></div>
+             </div>
+         
+             <div class="row">
+               <div class="col-1"></div>
+               <div class="col form-group">
+                   <input type="datetime-local" class="form-control" name="datetime">
+               </div>
+               <div class="col-1"></div>
+             </div>
+         
+             <div class="row">
+               <div class="col-1"></div>
+               <div class="col form-group">
+                   <textarea class="form-control" name="description" placeholder="Description"></textarea>
+               </div>
+               <div class="col-1"></div>
+             </div>
+
+             <div class="row">
+              <div class="col-1"></div>
+              <div class="col"id="case-submit-div">
+                <input class="btn btn-primary" type="submit" value="Register">
+              </div>
+              <div class="col-1"></div>
+             </div>
+         
+         </form>
+         </div>
+      </div>
+      <div class="modal-footer">
+        <!-- <button id="modal-3-close" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="modal-3-save"type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal 4 -->
+
+<!-- Button trigger modal -->
+<button hidden id="modal-4-button" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal4">
+  Launch demo modal
+</button>
+
+<div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Incident</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal3-body-text">
+        <div class="container">
+          <form action="{% url 'requests' %}" method="post">
+             {% csrf_token %}
+             <div class="row">
+               <div class="col-1"></div>
+               <div class="col form-group">
+                   <textarea class="form-control" id="edit-description" name="description" placeholder="Description"></textarea>
+               </div>
+               <div class="col-1"></div>
+             </div>
+             <input hidden type="text" id="target-post-id" name="target-id">
+            <div class="row">
+              <div class="col-6"></div>
+              <input class="col btn btn-primary" type="submit" value="Save">
+              <div class="col-1"></div>
+            </div>
+         </form>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+
+// MAKE EDIT INCIDENT BUTTON INVISIBLE
+document.querySelector("#edit-button").style.display = "none"
+
+// INSTANTIATE MAP AND SET THE DEFAULT AREA IT DEPICTS ON PAGE LOAD
+var mymap = L.map('mapid').setView([-28.666821, 24.512173], 5);
+
+// USE THE 'DARKMATTER' MAP SKIN
+var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+subdomains: 'abcd',
+maxZoom: 19
+}).addTo(mymap)
+
+// SET UP THE RED POSITION ICONS THAT DEPICT LOGGED INCIDENTS ON THE MAP
+var redIcon = L.icon({
+    iconUrl: 'https://img.pngio.com/red-dot-dot-dots-icon-with-png-and-vector-format-for-free-red-dot-png-512_512.png',
+    iconSize: [20, 20],
+})
+
+/**
+ * CODE FOR DISPLAYING INCIDENTS AND POPUPS ON MAP 
+ * AND OPENING INCIDENT DETAILS BELOW MAP
+*/
+
+// FETCH ALL INSTANCES OF THE 'INCIDENT' MODEL 
+fetch("/mapdata")
+.then(response => response.json())
+.then(cases => {
+  console.log(cases);
+
+  // FOR EACH INCIDENT INSTANCE
+  cases.forEach(function(caseItem) {
+
+    // CREATE A CLICKABLE LINK INSIDE POPUP
+    var viewCase = document.createElement('div')
+    viewCase.innerHTML = "View Case"
+    viewCase.style.fontStyle = "italic"
+    viewCase.style.cursor = "pointer"
+    
+    // CREATE POPUPS AND FILL THEM WITH ABBREVIATED INCIDENT DETAILS
+    position = []
+    position.push(caseItem.lat)
+    position.push(caseItem.long)
+    var markerText = document.createElement("div")
+    markerText.innerHTML = caseItem.typeOf + "<br>"
+    markerText.append(viewCase)
+
+    // CREATE RED DOT MARKERS AT GPS COORDS OF EACH INCIDENT
+    var marker = L.marker(position, {icon: redIcon}).addTo(mymap)
+
+    // BIND POPUPS TO MARKERS
+    marker.bindPopup(markerText)
+
+    // SHOW POPUPS WHEN HOVER OVER MARKERS
+    marker.on('mouseover', function (e) {
+      this.openPopup();
+    }); 
+  
+    // AUTO SCROLL DOWN WHEN 'VIEW CASE' LINK INSIDE POPUP IS CLICKED
+    viewCase.addEventListener("click", function(){
+      if (window.pageYOffset < 107 ) {
+        window.scroll(0, 100)
+      }
+
+      // DISPLAY THE INCIDENT BELOW THE MAP
+      document.querySelector("#case-details").style.display = "block"
+      let caseHeading = document.querySelector("#case-type")
+      caseHeading.innerHTML = caseItem.typeOf.toUpperCase() 
+      caseHeading.style.cursor = 'pointer'
+
+      // CLOSE THE INCIDENT WHEN ITS TITLE IS CLICKED
+      caseHeading.addEventListener('click', function() {
+          document.querySelector("#case-details").style.display = "none"
+      })
+      document.querySelector("#date").innerHTML = new Date(caseItem.timestamp).toString().slice(0, 21)
+      document.querySelector("#case").innerHTML = caseItem.description.replace(/\r\n?|\n/g, '<br>')
+
+      // SHOW THE PREVIOUSLY HIDDEN EDIT BUTTON IF USER IS AUTHENTICATED
+      fetch("/checkAuthentication")
+      .then(response => response.json())
+      .then(user => {
+        if(user.result == true) {
+          document.querySelector("#edit-button").style.display = "block"
+        }
+      })
+
+      // WHEN EDIT BUTTON IS CLICKED, OPEN MODAL TO ALLOW EDITING
+      document.querySelector("#edit-button").addEventListener("click", function() {
+        if (caseItem.beingEdited === true) {
+          alert("There is already a request to edit this case being processed")
+        } else {
+        document.querySelector("#edit-description").innerHTML = caseItem.description
+        document.querySelector("#target-post-id").value = caseItem.id
+        document.querySelector("#modal-4-button").click()
+        }
+      })
+    })
+  })
+})
+
+// **CODE FOR LOGGING A NEW INCIDENT**
+
+// SET UP LOG INCIDENT BUTTON 
+// BY EXTENDING LEAFLET 'CONTROL' CLASS
+
+L.Control.Button=L.Control.extend({
+    options: {
+    position: 'topright',
+    color: 'red',
+    },
+
+    // OPEN INSTRUCTION MODAL AFTER CLICKING 'LOG INCIDENT' BUTTON
+    onAdd:function(mymap){
+    var logIncidentButton = L.DomUtil.create('button');
+    logIncidentButton.innerHTML = 'LOG INCIDENT';
+    logIncidentButton.setAttribute("data-bs-toggle", "modal")
+    logIncidentButton.setAttribute("data-bs-target", "#exampleModal1")
+    logIncidentButton.setAttribute("id", "buttox")
+
+    // STYLE LOG INCIDENT BUTTON
+    logIncidentButton.setAttribute("class", "btn btn-primary")
+    logIncidentButton.style.backgroundColor = "red"
+    logIncidentButton.style.border = "none"
+    logIncidentButton.style.borderRadius = "0px"
+    logIncidentButton.setAttribute("z-index", "1")
+
+    // STOP MAP FROM THINKING IT HAS BEEN CLICKED WHEN
+    // LOG INCIDENT BUTTON HAS BEEN CLICKED
+    L.DomEvent.disableClickPropagation(logIncidentButton)
+    return logIncidentButton;
+    },
+    onRemove:function(mymap){},
+});
+
+L.control.button = function(opts){
+    return new L.Control.Button(opts);
+}
+
+// ONLY DISPLAY LOG INCIDENT BUTTON TO MAP IF USER IS AUTHENTICATED
+fetch("/checkAuthentication")
+.then(response => response.json())
+.then(user => {
+  if(user.result == true) {
+    L.control.button().addTo(mymap)
+  }
+})
+
+// AFTER CLOSING INSTRUCTION MODAL CLICK MAP TO SAVE COORDS
+document.querySelector("#modalClose")
+.addEventListener("click", function() {
+
+// AUTOMATICALLY OPEN NEXT INSTRUCTION MODAL AFTER CLICKING MAP 
+    mymap.addEventListener("click", function(e) {
+    document.querySelector("#modal2-body-text").innerHTML = "A set of GPS coordinates have been saved at the position you clicked. Click 'Save changes' to continue logging the incident, or 'Try again' to save a new set of coordinates. Click 'Abort' to abort this process." 
+    var lat = e.latlng['lat']
+    var lng = e.latlng['lng']
+    document.querySelector('#modal-2-button').click()
+
+    // ABORT PROCESS IF CLICK ABORT BUTTON ON MODAL
+    document.querySelector("#modal-2-abort")
+    .addEventListener("click", function(){
+      location.reload()
+    })
+
+    // IF CLICK SAVE COORDS BUTTON, PROCEED TO FINAL MODAL AND LOG 
+    // THE REST OF THE INCIDENT
+    document.querySelector("#modal-2-save")
+    .addEventListener("click", function() {
+      document.querySelector("#modal-2-close").click()
+      document.querySelector("#lat").value = lat
+      document.querySelector("#long").value = lng
+      setTimeout(function() {document.querySelector("#modal-3-button").click()}, 500)
+    })
+  })
+})
+
+// SET UP GPS COORDS FOR BOUNDARIES OF CAMPUSES 
+var uct = L.polygon([
+  [-33.960842, 18.459953],
+  [-33.95892, 18.456027],
+  [-33.954395, 18.458954],
+  [-33.953665, 18.463288]
+  ],
+  {weight: 1, color: "white"})
+  .addTo(mymap);
+
+var hidding = L.polygon([
+  [-33.931052, 18.413484],
+  [-33.930064, 18.412947],
+  [-33.928737, 18.413495],
+  [-33.929821, 18.414847]
+  ],
+  {weight: 1, color: "white"})
+  .addTo(mymap);
+
+var uJ = L.polygon([
+    [-26.196329, 28.027855],
+    [-26.198485, 28.010556],
+    [-26.186094, 27.983943],
+    [-26.181201, 27.995149],
+    [-26.186847, 28.017424],
+    [-26.191806, 28.020500],
+    ],
+    {weight: 1, color: "white"})
+    .addTo(mymap);
+
+var uKZN = L.polygon([
+  [-29.863681, 30.984715],
+  [-29.864399, 30.977969],
+  [-29.863337, 30.970544],
+  [-29.861999, 30.967324],
+  [-29.863359, 30.965507],
+  [-29.864518, 30.970296],
+  [-29.867349, 30.973117],
+  [-29.871613, 30.974206],
+  [-29.873256, 30.981984],
+  [-29.865427, 30.984644],
+  ],
+  {weight: 1, color: "white"})
+  .addTo(mymap);
+
+// EVENT LISTENERS ON CAMPUS LIST IN NAVBAR FOR 
+// TOGGLING BETWEEN CAMPUSES ON MAP
+document.querySelector("#uct").addEventListener("click", function() {
+  mymap.fitBounds(uct.getBounds());
+})
+document.querySelector("#hidding").addEventListener("click", function() {
+    mymap.fitBounds(hidding.getBounds());
+})
+document.querySelector("#uj").addEventListener("click", function() {
+    mymap.fitBounds(uJ.getBounds());
+})
+document.querySelector("#ukzn").addEventListener("click", function() {
+    mymap.fitBounds(uKZN.getBounds());
+})
+
+</script>
+{% endblock %}
